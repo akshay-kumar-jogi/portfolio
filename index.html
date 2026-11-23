@@ -70,7 +70,7 @@
             "name": "Spotify interface clone",
             "description": "A static frontend learning project recreating parts of Spotify’s dark visual style using HTML and CSS.",
             "author": { "@id": "#akshay-kumar-jogi" },
-            "url": "https://github.com/akshaykumarjogi/Spotify-Clone"
+            "url": "https://github.com/akshay-kumar-jogi/Spotify-Clone"
           }
         ]
       }
@@ -119,6 +119,9 @@
             width="625"
             height="625"
             fetchpriority="high"
+            draggable="false"
+            onselectstart="return false"
+            onmousedown="return false;"
           />
           <figcaption>Portrait / Chapter one</figcaption>
           <span class="portrait-number">STILL<br />BECOMING</span>
@@ -163,6 +166,9 @@
           src="assets\akshay.jpeg"
           alt="Akshay Kumar Jogi looking into a misty landscape beneath a tree"
           loading="lazy"
+          draggable="false"
+          onselectstart="return false"
+          onmousedown="return false;"
         />
         <div class="interlude-copy">
           <p>Learning is not a straight line.</p>
@@ -285,7 +291,7 @@
             </p>
             <ol class="timeline">
               <li class="reveal">
-                <span>2026—27</span>
+                <span>2026-2027</span>
                 <div>
                   <h3>
                     <a
@@ -364,13 +370,13 @@
         <p class="overline">A conversation is a good place to start.</p>
         <h2>LET’S STAY<br /><em>IN TOUCH.</em></h2>
         <div class="connect-links">
-          <a  
+          <a
             href="https://www.linkedin.com/in/akshaykumarjogi"
             target="_blank"
             rel="noreferrer"
             >LinkedIn <span>↗</span></a
           ><a
-            href="https://github.com/akshaykumarjogi"
+            href="https://github.com/akshay-kumar-jogi"
             target="_blank"
             rel="noreferrer"
             >GitHub <span>↗</span></a
@@ -393,5 +399,209 @@
       ><span>Built as a living portfolio.</span><a href="#top">Back to top ↑</a>
     </footer>
     <script src="script.js"></script>
+
+    <!-- Custom cursor -->
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursor-ring"></div>
+
+    <script>
+      (function () {
+        // Respect prefers-reduced-motion
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          document.documentElement.classList.add("reduced-motion");
+        }
+
+        const cursor = document.getElementById("cursor");
+        const cursorRing = document.getElementById("cursor-ring");
+        const reducedMotion =
+          document.documentElement.classList.contains("reduced-motion");
+
+        // Interactive elements that should trigger cursor change
+        const interactiveElements = [
+          "a",
+          "button",
+          "input",
+          "select",
+          "textarea",
+          ".project-card",
+          ".timeline li",
+          ".journey-copy",
+          ".section-heading h2",
+          ".overline",
+        ];
+
+        // Check if element is interactive
+        function isInteractive(el) {
+          if (!el || el.disabled) return false;
+          const tag = el.tagName.toLowerCase();
+          if (
+            tag === "a" ||
+            tag === "button" ||
+            tag === "input" ||
+            tag === "select" ||
+            tag === "textarea"
+          )
+            return true;
+          if (
+            el.classList &&
+            interactiveElements.some((cls) => el.classList.contains(cls))
+          )
+            return true;
+          return false;
+        }
+
+        // Get actual mouse position
+        function getMousePos(e) {
+          return {
+            x: e.clientX,
+            y: e.clientY,
+          };
+        }
+
+        // Smooth animation loop
+        const mousePos = { x: 0, y: 0 };
+        const cursorPos = { x: 0, y: 0 };
+        const ringPos = { x: 0, y: 0 };
+
+        function animate() {
+          // Smooth easing - lerp (linear interpolation)
+          // Higher value = faster cursor response, lower = smoother
+          cursorPos.x += (mousePos.x - cursorPos.x) * 0.25;
+          cursorPos.y += (mousePos.y - cursorPos.y) * 0.25;
+          ringPos.x += (mousePos.x - ringPos.x) * 0.25;
+          ringPos.y += (mousePos.y - ringPos.y) * 0.25;
+
+          cursor.style.left = cursorPos.x - 4 + "px"; // offset by half cursor width
+          cursor.style.top = cursorPos.y - 4 + "px"; // offset by half cursor height
+          cursorRing.style.left = ringPos.x - 16 + "px";
+          cursorRing.style.top = ringPos.y - 16 + "px";
+
+          requestAnimationFrame(animate);
+        }
+
+        // Mouse move event
+        document.addEventListener("mousemove", (e) => {
+          mousePos.x = e.clientX;
+          mousePos.y = e.clientY;
+        });
+
+        // Initialize animation loop
+        requestAnimationFrame(animate);
+
+        // Hover interactions - hide custom cursor on buttons, images, and text
+        const hoverElements = document.querySelectorAll(
+          interactiveElements.join(", "),
+        );
+
+        // Check if element is text-based
+        function isTextElement(el) {
+          if (!el) return false;
+          const tag = el.tagName.toLowerCase();
+          // Text-related HTML tags
+          const textTags = [
+            "p",
+            "span",
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6",
+            "li",
+            "div",
+          ];
+          // Elements with text-related classes
+          const textClasses = [
+            "overline",
+            "section-heading",
+            "journey-copy",
+            "real-world-intro",
+            "section-no",
+            "manifesto-main",
+            "growth",
+            "journey",
+          ];
+          // Check tag
+          if (textTags.includes(tag)) return true;
+          // Check classes
+          if (el.classList) {
+            if (textClasses.some((cls) => el.classList.contains(cls)))
+              return true;
+            // Check if element has only text content and no interactive children
+            const hasInteractiveChildren = Array.from(el.children).some(
+              (child) =>
+                child.tagName &&
+                ["A", "BUTTON", "INPUT"].includes(child.tagName.toUpperCase()),
+            );
+            if (!hasInteractiveChildren && el.textContent.trim().length > 0)
+              return true;
+          }
+          return false;
+        }
+
+        hoverElements.forEach((el) => {
+          el.addEventListener("mouseenter", () => {
+            if (isInteractive(el)) {
+              // Check if it's a button or image - hide custom cursor
+              const tag = el.tagName.toLowerCase();
+              const isButtonImage = tag === "button" || tag === "img";
+
+              // Check if it's text
+              const isText = isTextElement(el);
+
+              if (isButtonImage || isText) {
+                // Hide custom cursor - reveal default browser cursor
+                cursor.style.display = "none";
+                cursorRing.style.display = "none";
+              } else {
+                // Regular interactive hover effect
+                cursor.style.transform = "scale(1.5)";
+                cursorRing.style.transform = "scale(1)";
+                cursorRing.style.opacity = ".3";
+              }
+            }
+          });
+
+          el.addEventListener("mouseleave", () => {
+            // Check if it's a button or image
+            const tag = el.tagName.toLowerCase();
+            const isButtonImage = tag === "button" || tag === "img";
+
+            // Check if it's text
+            const isText = isTextElement(el);
+
+            if (isButtonImage || isText) {
+              // Restore custom cursor
+              cursor.style.display = "";
+              cursorRing.style.display = "";
+            } else {
+              // Restore regular hover effect
+              cursor.style.transform = "";
+              cursorRing.style.transform = "";
+              cursorRing.style.opacity = ".5";
+            }
+          });
+        });
+
+        // Disable cursor on touch devices
+        function isTouchDevice() {
+          return "ontouchstart" in window || navigator.maxTouchPoints > 0;
+        }
+
+        if (isTouchDevice()) {
+          cursor.style.display = "none";
+          cursorRing.style.display = "none";
+        }
+
+        // Global prevent image dragging and text selection
+        document.addEventListener("dragstart", (e) => {
+          e.preventDefault();
+        }, false);
+
+        document.addEventListener("selectstart", (e) => {
+          e.preventDefault();
+        }, false);
+      })();
+    </script>
   </body>
 </html>
