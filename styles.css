@@ -1067,3 +1067,147 @@ footer a {
         animation: none;
     }
 }
+
+/* Floating section navigation */
+.floating-nav {
+    position: fixed;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+    pointer-events: none;
+}
+
+.floating-nav.visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.floating-nav.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Hide floating navigation on mobile screens (max-width 720px) */
+@media (max-width: 720px) {
+    .floating-nav {
+        display: none;
+    }
+}
+
+.floating-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.floating-nav li {
+    transform: translateX(0);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.floating-nav.visible li {
+    transform: none;
+    opacity: 1;
+}
+
+.floating-nav.visible li:nth-child(1) { transition-delay: 0.05s; }
+.floating-nav.visible li:nth-child(2) { transition-delay: 0.1s; }
+.floating-nav.visible li:nth-child(3) { transition-delay: 0.15s; }
+.floating-nav.visible li:nth-child(4) { transition-delay: 0.2s; }
+
+.floating-nav a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    color: var(--muted);
+    text-decoration: none;
+    font: 10px var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: color 0.3s ease, transform 0.2s ease;
+    border-radius: 50%;
+    background: transparent;
+}
+
+.floating-nav a:hover,
+.floating-nav a:focus {
+    color: var(--white);
+    transform: translateY(-4px) scale(1.1);
+    background: rgba(173, 216, 230, 0.3);
+}
+
+.floating-nav a.active {
+    /* Active state background removed - only shows on hover */
+    color: var(--white);
+    background: transparent;
+    transform: scale(1.15);
+    width: 48px;
+    height: 48px;
+    font-size: 12px;
+}
+
+.floating-nav a.active:hover {
+    background: rgba(173, 216, 230, 0.3);
+    background: var(--blue);
+}
+
+.floating-nav a.active::before {
+    display: none;
+}
+
+.floating-nav a span {
+    display: none;
+}
+
+.floating-nav a.active span {
+    display: none;
+}
+
+/* Ensure cursor blend mode is neutral over the floating nav */
+.floating-nav {
+    isolation: isolate;
+    -webkit-mix-blend-mode: normal;
+    mix-blend-mode: normal;
+}
+
+.floating-nav a:hover,
+.floating-nav a:focus {
+    color: var(--blue);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .floating-nav {
+        transition: opacity 0.1s ease, visibility 0.1s ease;
+    }
+
+    .floating-nav ul li {
+        transition: opacity 0.1s ease;
+        transform: none;
+    }
+
+    .floating-nav a {
+        transition: color 0.1s ease;
+    }
+
+    .floating-nav a:hover,
+    .floating-nav a:focus {
+        transform: none;
+    }
+}
